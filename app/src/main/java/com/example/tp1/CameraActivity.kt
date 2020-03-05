@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Size
 import android.view.Surface
@@ -56,6 +57,10 @@ class CameraActivity : AppCompatActivity() {
   private lateinit var takePicBtn: FloatingActionButton;
   private lateinit var flipBtn: ImageButton;
   private var textureView: TextureView? = null
+
+  private lateinit var displayMetrics: DisplayMetrics;
+  private var DSI_height: Int = -1;
+  private var DSI_width: Int = -1;
 
   private lateinit var galleryFolder: File;
 
@@ -124,6 +129,11 @@ class CameraActivity : AppCompatActivity() {
         this@CameraActivity.cameraDevice = null
       }
     }
+
+    displayMetrics = DisplayMetrics();
+    windowManager.defaultDisplay.getMetrics(displayMetrics);
+    DSI_height = displayMetrics.heightPixels;
+    DSI_width = displayMetrics.widthPixels;
   }
 
   private fun takePicture() {
@@ -190,6 +200,7 @@ class CameraActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
       ) {
         cameraManager!!.openCamera(cameraId!!, stateCallback!!, backgroundHandler)
+
       }
     } catch (e: CameraAccessException) {
       e.printStackTrace()
@@ -299,8 +310,10 @@ class CameraActivity : AppCompatActivity() {
     return File.createTempFile(timeStamp, ".jpg", galleryFolder);
   }
 
-  companion object {
+  fun adjustAspectRatio() {
+  }
 
+  companion object {
     private val CAMERA_REQUEST_CODE = 32
   }
 

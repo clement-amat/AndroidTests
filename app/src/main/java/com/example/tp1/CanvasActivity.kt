@@ -3,7 +3,6 @@ package com.example.tp1
 import android.app.Activity
 import android.content.Intent
 import android.graphics.*
-import android.hardware.Sensor
 import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
@@ -50,7 +49,7 @@ class CanvasActivity : Activity() {
         })
         btnChooseImage.setOnClickListener(View.OnClickListener { chooseImage() })
         imagePath = intent.getStringExtra("imagePath");
-        loadPicture(Uri.fromFile(File(imagePath)));
+
     }
 
     fun chooseImage() {
