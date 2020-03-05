@@ -32,6 +32,7 @@
                     android:src="@drawable/ic_image_black_96dp_white"/>
 
                 <ImageView
+                    android:id="@+id/btnColor"
                     android:layout_width="60dip"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dip"
