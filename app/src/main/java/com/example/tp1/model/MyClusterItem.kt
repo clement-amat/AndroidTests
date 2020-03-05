@@ -22,11 +22,11 @@ class MyClusterItem : ClusterItem {
         return mPosition
     }
 
-    override fun getTitle(): String {
+    fun getTitle(): String {
         return mTitle
     }
 
-    override fun getSnippet(): String {
+    fun getSnippet(): String {
         return mSnippet
     }
 }
