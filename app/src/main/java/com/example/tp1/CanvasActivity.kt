@@ -99,6 +99,7 @@ class CanvasActivity : Activity() {
             // .setNegativeButton("cancel") { dialog, which -> paint.setColor(Color.BLACK) }
             .build()
             .show()
+        paint.strokeWidth = 20f
     }
 
     fun chooseImage() {
