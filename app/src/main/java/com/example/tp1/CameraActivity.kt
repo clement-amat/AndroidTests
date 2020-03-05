@@ -300,8 +300,6 @@ class CameraActivity : AppCompatActivity() {
     return File.createTempFile(timeStamp, ".jpg", galleryFolder);
   }
 
-  fun adjustAspectRatio() {
-  }
 
   companion object {
     private val CAMERA_REQUEST_CODE = 32
