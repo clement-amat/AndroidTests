@@ -10,6 +10,7 @@ class MainActivity : AppCompatActivity() {
 
     public lateinit var sensorButton: Button;
     public lateinit var cameraButton: Button;
+    public lateinit var canvasButton: Button;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +23,9 @@ class MainActivity : AppCompatActivity() {
 
         cameraButton = findViewById(R.id.btn3);
         cameraButton.setOnClickListener { v -> startActivity(Intent(this, CameraActivity::class.java))}
+
+        canvasButton = findViewById(R.id.btnCanvas);
+        canvasButton.setOnClickListener { v -> startActivity(Intent(this, CanvasActivity::class.java))}
     }
 
 }
