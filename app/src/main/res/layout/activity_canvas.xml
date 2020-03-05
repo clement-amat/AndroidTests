@@ -40,11 +40,11 @@
                     android:src="@drawable/ic_create_black_96dp_white"/>
 
                 <ImageView
-                    android:layout_width="60dip"
-                    android:layout_height="wrap_content"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_filter_b_and_w_black_96dp_white"/>
-
+                  android:layout_width="60dip"
+                  android:layout_height="wrap_content"
+                  android:layout_marginRight="10dip"
+                  android:scaleType="fitCenter"
+                  android:src="@drawable/ic_mood_black_24dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -68,32 +68,11 @@
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:src="@tools:sample/backgrounds/scenic"/>
+          android:id="@+id/imageView"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          tools:src="@tools:sample/backgrounds/scenic" />
 
-        <!--        <androidx.coordinatorlayout.widget.CoordinatorLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <com.google.android.material.bottomappbar.BottomAppBar
-                        android:id="@+id/canvasAppBar"
-                        android:layout_width="match_parent"
-                        android:layout_height="55dp"
-                        android:layout_gravity="bottom"
-                        app:backgroundTint="@color/colorPrimary"
-                        app:fabAlignmentMode="center" />
-
-
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/fab"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@android:drawable/ic_menu_gallery"
-                        app:layout_anchor="@id/canvasAppBar" />
-
-                </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
