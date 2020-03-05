@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "657561904793",
+    "firebase_url": "https://vitateam-android.firebaseio.com",
+    "project_id": "vitateam-android",
+    "storage_bucket": "vitateam-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657561904793:android:8e0f19943c626eff21fa08",
+        "android_client_info": {
+          "package_name": "com.example.tp1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "657561904793-ok4q52gdkj5tb6h4gqb2h716li7e17pp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tp1",
+            "certificate_hash": "ca8f81079a2dd46718252a9d9a8d74849f3220c8"
+          }
+        },
+        {
+          "client_id": "657561904793-ocr10o435s2s23m36qn316bc7bapvpht.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSK_vWDiKkUlZ8aqU6rl0fTDSTJQB1pZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657561904793-ocr10o435s2s23m36qn316bc7bapvpht.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

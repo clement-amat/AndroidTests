@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SensorActivity" >
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow>
+
+            <TextView
+                android:text="Name"
+                android:padding="3dip"/>
+
+            <TextView
+                android:id="@+id/tvName"
+                android:padding="3dip"
+                android:text="TextView" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:text="Type"
+                android:padding="3dip" />
+
+            <TextView
+                android:id="@+id/tvType"
+                android:text="TextView"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:text="Resolution"
+                android:padding="3dip"/>
+
+            <TextView
+                android:id="@+id/tvResolution"
+                android:text="TextView"
+                android:padding="3dip"/>
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:text="Power"
+                android:padding="3dip"/>
+
+            <TextView
+                android:id="@+id/tvPower"
+                android:text="TextView"
+                android:padding="3dip"/>
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:padding="3dip"
+                android:text="Value"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+            <TextView
+                android:id="@+id/tvValue"
+                android:padding="3dip"
+                android:text="TextView"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+        </TableRow>
+    </TableLayout>
+</RelativeLayout>
