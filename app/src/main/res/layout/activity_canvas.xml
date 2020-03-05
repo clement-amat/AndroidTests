@@ -8,13 +8,63 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/layout_container_canvas">
 
-        <Button
-            android:id="@+id/btnLoad"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Load image" />
+            android:layout_height="60dip"
+            android:background="@color/colorPrimary"
+            android:padding="10dip"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="60dip"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnLoad"
+                    android:scaleType="fitCenter"
+                    android:layout_marginRight="10dip"
+                    android:src="@drawable/ic_image_black_96dp_white"/>
+
+                <ImageView
+                    android:layout_width="60dip"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dip"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_create_black_96dp_white"/>
+
+                <ImageView
+                    android:layout_width="60dip"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_filter_b_and_w_black_96dp_white"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="60dip"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_send_black_96dp_white"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/imageView"

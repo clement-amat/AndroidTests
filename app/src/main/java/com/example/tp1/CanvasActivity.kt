@@ -4,17 +4,24 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.*
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import com.skydoves.powermenu.MenuAnimation
+import com.skydoves.powermenu.OnMenuItemClickListener
+import com.skydoves.powermenu.PowerMenu
+import com.skydoves.powermenu.PowerMenuItem
 import java.io.InputStream
 
 
 class CanvasActivity : Activity() {
 
-    private lateinit var btnChooseImage: Button;
+    private lateinit var btnChooseImage: ImageView;
     private lateinit var canvas: Canvas;
     private var paint: Paint = Paint();
     private lateinit var bitmap: Bitmap;
@@ -23,6 +30,16 @@ class CanvasActivity : Activity() {
 
     private var oldX: Float = -1f;
     private var oldY: Float = -1f;
+
+    private lateinit var powerMenu: PowerMenu;
+
+    private val onMenuItemClickListener: OnMenuItemClickListener<PowerMenuItem> = object : OnMenuItemClickListener<PowerMenuItem> {
+        override fun onItemClick(position: Int, item: PowerMenuItem) {
+            Toast.makeText(baseContext, item.title, Toast.LENGTH_SHORT).show()
+            powerMenu.selectedPosition = position // change selected item
+            powerMenu.dismiss()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +62,22 @@ class CanvasActivity : Activity() {
             }
         })
         btnChooseImage.setOnClickListener(View.OnClickListener { chooseImage() })
+        val powerMenu: PowerMenu = PowerMenu.Builder(this)
+            .addItemList(listOf(PowerMenuItem("Novel"), PowerMenuItem("Poetry"), PowerMenuItem("Art"))) // list has "Novel", "Poerty", "Art"
+            .addItem(PowerMenuItem("Journals", false)) // add an item.
+            .addItem(PowerMenuItem("Travel", false)) // aad an item list.
+            .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
+            .setMenuRadius(10f) // sets the corner radius.
+            .setMenuShadow(10f) // sets the shadow.
+            .setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
+            .setTextGravity(Gravity.CENTER)
+            .setTextTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD))
+            .setSelectedTextColor(Color.WHITE)
+            .setMenuColor(Color.WHITE)
+            .setSelectedMenuColor(ContextCompat.getColor(this, R.color.colorPrimary))
+            .setOnMenuItemClickListener(onMenuItemClickListener)
+            .build()
+        // powerMenu.showAsDropDown(findViewById(R.id.layout_container_canvas))
     }
 
     fun chooseImage() {
