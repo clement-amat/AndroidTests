@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Camera
@@ -129,10 +130,12 @@ class CameraActivity : AppCompatActivity() {
     var outputPhoto: FileOutputStream? = null;
     try {
       createImageGallery();
-      outputPhoto = FileOutputStream(createImageFile(galleryFolder));
+      val imageFile = createImageFile(galleryFolder);
+      outputPhoto = FileOutputStream(imageFile);
       textureView?.bitmap?.compress(Bitmap.CompressFormat.PNG, 100, outputPhoto);
 
       println(galleryFolder.absolutePath)
+      startCanvasActivity(imageFile.absolutePath)
     } catch (e: Exception) {
       e.printStackTrace();
     } finally {
@@ -142,6 +145,12 @@ class CameraActivity : AppCompatActivity() {
         e.printStackTrace();
       }
     }
+  }
+
+  private fun startCanvasActivity(absolutePath: String) {
+    val intent = Intent(this, CanvasActivity::class.java);
+    intent.putExtra("imagePath", absolutePath);
+    startActivity(intent);
   }
 
   private fun setUpCamera() {

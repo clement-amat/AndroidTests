@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CameraActivity"></activity>
+        <activity android:name=".CanvasActivity" />
+        <activity android:name=".CameraActivity" />
         <activity android:name=".SensorsListActivity" />
         <activity android:name=".SensorActivity" />
         <activity android:name=".MainActivity">
