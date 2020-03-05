@@ -49,7 +49,7 @@ class CanvasActivity : Activity() {
         })
         btnChooseImage.setOnClickListener(View.OnClickListener { chooseImage() })
         imagePath = intent.getStringExtra("imagePath");
-
+        loadPicture(Uri.fromFile(File(imagePath)));
     }
 
     fun chooseImage() {
