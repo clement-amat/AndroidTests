@@ -25,6 +25,7 @@ import android.util.Log
 import android.util.Size
 import android.view.Surface
 import android.view.TextureView
+import android.view.Window
 import android.widget.Button
 import android.widget.ImageButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -61,6 +62,7 @@ class CameraActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    requestWindowFeature(Window.FEATURE_NO_TITLE)
     setContentView(R.layout.activity_camera)
 
     textureView = findViewById(R.id.texture_view)
@@ -132,7 +134,7 @@ class CameraActivity : AppCompatActivity() {
       createImageGallery();
       val imageFile = createImageFile(galleryFolder);
       outputPhoto = FileOutputStream(imageFile);
-      textureView?.bitmap?.compress(Bitmap.CompressFormat.PNG, 100, outputPhoto);
+      textureView?.bitmap?.compress(Bitmap.CompressFormat.JPEG, 70, outputPhoto);
 
       println(galleryFolder.absolutePath)
       startCanvasActivity(imageFile.absolutePath)
