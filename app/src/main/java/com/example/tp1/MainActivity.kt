@@ -1,21 +1,17 @@
 package com.example.tp1
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.*
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import com.example.tp1.helpers.StorageHelper
-import com.google.firebase.FirebaseApp
 
 class MainActivity : AppCompatActivity() {
 
     public lateinit var sensorButton: Button;
     public lateinit var cameraButton: Button;
     public lateinit var mapBtn: Button;
+    public lateinit var buttontest: Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +30,12 @@ class MainActivity : AppCompatActivity() {
         mapBtn.setOnClickListener {
             v ->
             startActivity(Intent(this, MapsActivity::class.java))
+        }
+
+        buttontest = findViewById(R.id.buttontest);
+        buttontest.setOnClickListener {
+            v ->
+            startActivity(Intent(this, ShowFirestoreActivity::class.java))
         }
     }
 

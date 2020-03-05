@@ -1,6 +1,5 @@
 package com.example.tp1
 
-import MyClusterItem
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,7 +13,11 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.example.tp1.model.Photo
+import androidx.lifecycle.Observer
+import com.example.tp1.dagger.DaggerAppComponent
+import com.example.tp1.model.db.StoredPhoto
+import com.example.tp1.model.maps.MyOtherItem
+import com.example.tp1.viewmodel.FirestoreViewModel
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -22,6 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterManager
+import javax.inject.Inject
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -29,12 +33,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     val PERMISSION_ID = 42
     lateinit var mFusedLocationClient: FusedLocationProviderClient
-    lateinit var photosList: List<Photo>
-    private lateinit var mClusterManager: ClusterManager<MyClusterItem>
+    private lateinit var mManager: ClusterManager<MyOtherItem>
 
+    @Inject
+    lateinit var firestoreViewModel: FirestoreViewModel
+
+    init {
+        DaggerAppComponent.create().injectFirestoreViewModel(this)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initList()
         setContentView(R.layout.activity_maps)
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -45,13 +53,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun initMarkers() {
-        photosList.forEach{
-            photo -> mClusterManager.addItem(MyClusterItem(photo.lat, photo.long, photo.title, "snp"))
-        }
+        firestoreViewModel.getStoredPhotos().observe(this, Observer {
+            mManager.clearItems()
+            it.forEach{
+                photo -> mManager.addItem(
+                MyOtherItem(
+                    photo.lat,
+                    photo.long,
+                    photo.title,
+                    photo.author
+                )
+            )
+            }
+        })
     }
 
     fun handleClusterEvents() {
-        mClusterManager.setOnClusterClickListener { cluster ->
+        mManager.setOnClusterClickListener { cluster ->
             mMap.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(
@@ -62,23 +80,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             )
             return@setOnClusterClickListener true;
         }
-        mClusterManager.setOnClusterItemClickListener { item ->
+        mManager.setOnClusterItemClickListener { item ->
             startActivity(Intent(this, LoadImageFromFirebase::class.java));
             return@setOnClusterItemClickListener true;
 
 
         }
-    }
-
-    fun initList(){
-        var photo = Photo(43.562456,1.475995, "toto");
-        var photo2 = Photo(43.558311, 1.485188, "tata");
-        var photo3 = Photo(43.558311, 1.485280, "tata2");
-        var photo4 = Photo(43.558311, 1.485280, "tata3");
-        var photo5 = Photo(43.558311, 1.485188, "tata4");
-        var photo6 = Photo(43.558311, 1.485188, "tata5");
-
-        photosList = listOf(photo, photo2, photo3, photo4, photo5, photo6);
     }
 
     /**
@@ -97,9 +104,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setUpClusterer() {
-        mClusterManager = ClusterManager(this, mMap)
-        mMap.setOnCameraIdleListener(mClusterManager)
-        mMap.setOnMarkerClickListener(mClusterManager)
+        mManager = ClusterManager(this, mMap)
+        mMap.setOnCameraIdleListener(mManager)
+        mMap.setOnMarkerClickListener(mManager)
         handleClusterEvents()
         initMarkers()
     }

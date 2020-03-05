@@ -1,10 +1,11 @@
 package com.example.tp1.dagger
 
-import com.example.tp1.ShowFirestoreActivity
-import com.example.tp1.viewmodel.FirestoreRepository
+import com.example.tp1.MapsActivity
+import com.example.tp1.viewmodel.FirestoreViewModel
 import dagger.Component
 
 @Component
 interface AppComponent {
-    fun injectFirestoreRepository(showFirestoreActivity:ShowFirestoreActivity)
+    fun injectFirestoreRepository(firestoreViewModel: FirestoreViewModel)
+    fun injectFirestoreViewModel(mapsActivity: MapsActivity)
 }

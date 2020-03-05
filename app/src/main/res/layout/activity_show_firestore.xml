@@ -6,4 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".ShowFirestoreActivity">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="137dp"
+        android:layout_height="73dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="163dp"
+        tools:layout_editor_absoluteY="273dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

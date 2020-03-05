@@ -1,7 +1,9 @@
+package com.example.tp1.model.maps
+
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 
-class MyClusterItem : ClusterItem {
+class MyOtherItem : ClusterItem {
     private val mPosition: LatLng
     private val mTitle: String
     private val mSnippet: String
@@ -22,11 +24,11 @@ class MyClusterItem : ClusterItem {
         return mPosition
     }
 
-    fun getTitle(): String {
+    override fun getTitle(): String {
         return mTitle
     }
 
-    fun getSnippet(): String {
+    override fun getSnippet(): String {
         return mSnippet
     }
 }
