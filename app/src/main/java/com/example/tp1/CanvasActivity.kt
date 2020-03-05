@@ -18,6 +18,7 @@ import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import java.io.File
 import java.io.InputStream
 
 
@@ -35,8 +36,6 @@ class CanvasActivity : Activity() {
     private var oldX: Float = -1f;
     private var oldY: Float = -1f;
 
-    private var currentColor: String = "#000000";
-
     private lateinit var powerMenu: PowerMenu;
 
     private val onMenuItemClickListener: OnMenuItemClickListener<PowerMenuItem> = object : OnMenuItemClickListener<PowerMenuItem> {
@@ -51,7 +50,7 @@ class CanvasActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_canvas)
         imageView = findViewById(R.id.imageView)
-        paint.setColor(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null))
+        paint.setColor(Color.BLACK)
         paint.strokeWidth = 10f
         btnChooseImage = findViewById(R.id.btnLoad)
         btnChooseColor = findViewById(R.id.btnColor)
@@ -86,19 +85,18 @@ class CanvasActivity : Activity() {
             .setSelectedMenuColor(ContextCompat.getColor(this, R.color.colorPrimary))
             .setOnMenuItemClickListener(onMenuItemClickListener)
             .build()
+        loadPicture(Uri.fromFile(File(imagePath)))
     }
 
     private fun chooseColor() {
-        /*System.out.println("Choose color");
-        powerMenu.showAsDropDown(btnChooseColor)*/
         ColorPickerDialogBuilder
             .with(this)
             .setTitle("Choose color")
             .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
             .density(12)
-            .setOnColorSelectedListener { selectedColor -> currentColor = Integer.toHexString(selectedColor) }
             .setPositiveButton("ok") { dialog, selectedColor, allColors -> }
-            .setNegativeButton("cancel") { dialog, which -> currentColor = "#000000" }
+            .setOnColorSelectedListener { selectedColor -> System.out.println("ok" + selectedColor); paint.setColor(selectedColor) }
+            // .setNegativeButton("cancel") { dialog, which -> paint.setColor(Color.BLACK) }
             .build()
             .show()
     }
@@ -144,11 +142,6 @@ class CanvasActivity : Activity() {
         }
         return true
     }*/
-
-    private fun drawDot(view: View, event: MotionEvent) {
-        canvas.drawCircle(event.x, event.y, 5f, paint);
-        view.invalidate()
-    }
 
     private fun startLine(view: View, event: MotionEvent) {
         oldX = event.x;
