@@ -11,7 +11,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
+import com.example.tp1.dataclasses.Sticker
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.skydoves.powermenu.MenuAnimation
@@ -35,6 +35,7 @@ class CanvasActivity : Activity() {
 
     private var oldX: Float = -1f;
     private var oldY: Float = -1f;
+    private lateinit  var s: Sticker;
 
     private lateinit var powerMenu: PowerMenu;
 
@@ -54,15 +55,32 @@ class CanvasActivity : Activity() {
         paint.strokeWidth = 10f
         btnChooseImage = findViewById(R.id.btnLoad)
         btnChooseColor = findViewById(R.id.btnColor)
+        println("================= > On passe dans mon code")
         imageView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent?): Boolean {
                 if (firstTouch) {
                     initCanvas(v);
                 }
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> startLine(v, event)
-                    MotionEvent.ACTION_MOVE -> drawLine(v, event)
-                    MotionEvent.ACTION_UP -> endLine(v, event)
+                    MotionEvent.ACTION_DOWN -> if (false) startLine(v, event);
+                    MotionEvent.ACTION_MOVE ->{
+                      if (false) { // TODO
+                          drawLine(v, event)
+                      } else {
+                         // println(s)
+                         // println("x= "+ event.x + " y = " + event.y)
+                          if (s.left < event.getX() && event.getX() < s.left + s.right
+                              && s.top < event.getY() && event.getY() < s.top + s.bottom) {
+                              println("repositionnement")
+                              s.left = event.getX() - 128;
+                              s.top  = event.getY() - 128;
+                              s.bottom = s.top + 256f;
+                              s.right = s.left + 256f;
+                              drawSticker(s)
+                          }
+                      }
+                    }
+                    MotionEvent.ACTION_UP -> if (false) endLine(v, event)
                 }
                 return true // v?.onTouchEvent(event) ?: true
             }
@@ -119,29 +137,21 @@ class CanvasActivity : Activity() {
     private fun loadPicture(exifData: Uri) {
         val ins: InputStream? = getContentResolver()?.openInputStream(exifData);
         bitmap = BitmapFactory.decodeStream(ins).copy(Bitmap.Config.ARGB_8888, true);
+
         if (bitmap != null) {
-            imageView.setImageBitmap(bitmap);
-            canvas = Canvas(bitmap);
-            firstTouch = false;
+            redrawImageView()
             applyBlackAndWhiteFilter()
         } else {
             System.out.println("IMG IS NULL")
         }
     }
 
-/*    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.canvas_menu, menu)
-        return true
+    private fun redrawImageView() {
+        imageView.setImageBitmap(bitmap);
+        canvas = Canvas(bitmap);
+        firstTouch = false;
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item!!.itemId) {
-            R.id.canvas_menu_pen -> System.out.println("Pen menu item is clicked!")
-            R.id.canvas_menu_revert -> System.out.println("Revert menu item is clicked!")
-        }
-        return true
-    }*/
 
     private fun startLine(view: View, event: MotionEvent) {
         oldX = event.x;
@@ -169,6 +179,20 @@ class CanvasActivity : Activity() {
         canvas = Canvas(bitmap);
     }
 
+    private fun drawSticker(st: Sticker) {
+        // redraw scene
+        redrawImageView()
+
+        // draw current sticker
+        var paint0 = Paint();
+        paint.isAntiAlias = false;
+        paint.isFilterBitmap = true;
+        paint.isDither = true;
+        var sticker = BitmapFactory.decodeResource(resources, st.drawableId);
+        canvas.drawBitmap(sticker, null, RectF(st.left, st.top, st.right, st.bottom), paint0)
+        imageView.invalidate()
+    }
+
     private fun applyBlackAndWhiteFilter() {
         //         imageView.setColorFilter(Color.RED, PorterDuff.Mode.LIGHTEN);
         val mxA = ColorMatrix()
@@ -179,6 +203,10 @@ class CanvasActivity : Activity() {
         val paint = Paint();
         paint.setColorFilter(ColorMatrixColorFilter(mxA));
         canvas.drawBitmap(bitmap, 0f, 0f, paint)
+
+        s = Sticker(R.drawable.emoji_happy, 0f, 0f, 256f, 256f);
+        drawSticker(s);
+
     }
 
 }
