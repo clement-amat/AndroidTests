@@ -32,6 +32,7 @@ class CanvasActivity : Activity() {
     private lateinit var imageView: ImageView;
     private var firstTouch: Boolean = true;
     private var imagePath: String? = null;
+    private var originalImage: Bitmap? = null;
 
     private var oldX: Float = -1f;
     private var oldY: Float = -1f;
@@ -136,7 +137,8 @@ class CanvasActivity : Activity() {
 
     private fun loadPicture(exifData: Uri) {
         val ins: InputStream? = getContentResolver()?.openInputStream(exifData);
-        bitmap = BitmapFactory.decodeStream(ins).copy(Bitmap.Config.ARGB_8888, true);
+        originalImage = BitmapFactory.decodeStream(ins);
+        bitmap = originalImage!!.copy(Bitmap.Config.ARGB_8888, true);
 
         if (bitmap != null) {
             redrawImageView()
@@ -181,7 +183,14 @@ class CanvasActivity : Activity() {
 
     private fun drawSticker(st: Sticker) {
         // redraw scene
-        redrawImageView()
+
+        if (originalImage != null) {
+            bitmap = originalImage!!.copy(Bitmap.Config.ARGB_8888, true);
+            imageView.setImageBitmap(bitmap!!);
+            canvas = Canvas(bitmap!!);
+            firstTouch = false;
+
+        }
 
         // draw current sticker
         var paint0 = Paint();
