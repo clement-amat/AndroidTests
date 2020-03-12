@@ -77,15 +77,15 @@ class CanvasActivity : Activity(), SensorEventListener {
                     initCanvas(v);
                 }
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> if (false) startLine(v, event);
+                    MotionEvent.ACTION_DOWN -> if (noneEmojiSelected(event)) startLine(v, event);
                     MotionEvent.ACTION_MOVE ->{
-                      if (false) { // TODO
+                      if (noneEmojiSelected(event)) { // TODO
                           drawLine(v, event)
                       } else {
                          drawStickers(event);
                       }
                     }
-                    MotionEvent.ACTION_UP -> if (false) endLine(v, event)
+                    MotionEvent.ACTION_UP -> if (noneEmojiSelected(event)) endLine(v, event)
                 }
                 return true // v?.onTouchEvent(event) ?: true
             }
@@ -108,8 +108,8 @@ class CanvasActivity : Activity(), SensorEventListener {
         }
         stickers.forEach{ sticker ->
             if (event != null) {
-                if (sticker.left < event.getX() && event.getX() < sticker.left + sticker.right
-                    && sticker.top < event.getY() && event.getY() < sticker.top + sticker.bottom) {
+                if (sticker.left < event.getX() && event.getX() < sticker.left + 256f
+                    && sticker.top < event.getY() && event.getY() < sticker.top + 256f) {
                     sticker.left = event.getX() - 128;
                     sticker.top  = event.getY() - 128;
                     sticker.bottom = sticker.top + 256f;
@@ -142,6 +142,17 @@ class CanvasActivity : Activity(), SensorEventListener {
         var addedSticker = Sticker(R.drawable.emoji_happy, 0f, 0f, 256f, 256f)
         stickers.add(addedSticker);
         drawStickers(null);
+    }
+
+    fun noneEmojiSelected(event: MotionEvent): Boolean {
+        for (sticker in stickers) {
+            if (sticker.left < event.getX() && event.getX() < sticker.left + sticker.right
+                && sticker.top < event.getY() && event.getY() < sticker.top + sticker.bottom) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
@@ -210,6 +221,7 @@ class CanvasActivity : Activity(), SensorEventListener {
         oldX = -1f
         oldY = -1f
         view.invalidate()
+
     }
 
     private fun initCanvas(view: View) {
@@ -217,6 +229,8 @@ class CanvasActivity : Activity(), SensorEventListener {
         bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888);
         imageView.setImageBitmap(bitmap);
         canvas = Canvas(bitmap);
+
+        
     }
 
     private fun drawSticker(st: Sticker) {
