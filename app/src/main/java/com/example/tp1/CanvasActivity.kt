@@ -1,6 +1,5 @@
 package com.example.tp1
 
-import android.R.attr.src
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -11,23 +10,16 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import com.example.tp1.dataclasses.Sticker
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
-import com.skydoves.powermenu.MenuAnimation
-import com.skydoves.powermenu.OnMenuItemClickListener
-import com.skydoves.powermenu.PowerMenu
-import com.skydoves.powermenu.PowerMenuItem
 import java.io.File
 import java.io.InputStream
-
+import android.graphics.Bitmap
 
 class CanvasActivity : Activity(), SensorEventListener {
 
@@ -37,7 +29,6 @@ class CanvasActivity : Activity(), SensorEventListener {
     private var lastUpdate: Long = 0
     private lateinit var btnChooseImage: ImageView;
     private lateinit var btnChooseColor: ImageView;
-    private lateinit var btnNextFilter: ImageView;
     private lateinit var canvas: Canvas;
     private var paint: Paint = Paint();
     private lateinit var bitmap: Bitmap;
@@ -50,24 +41,18 @@ class CanvasActivity : Activity(), SensorEventListener {
 
     private var oldX: Float = -1f;
     private var oldY: Float = -1f;
-    private lateinit  var s: Sticker;
+    private var stickers: MutableList<Sticker> = ArrayList();
 
+    private lateinit var btnEmojiHappy: ImageButton;
+    private lateinit var btnEmojiNerd: ImageButton;
+    private lateinit var btnEmojiLove: ImageButton;
+    private lateinit var btnEmojiDead: ImageButton;
     enum class FilterType {
         NORMAL,
         BLACK_AND_WHITE,
         INVERTED
     }
     private var currentFilter: FilterType = FilterType.NORMAL
-
-    private lateinit var powerMenu: PowerMenu;
-
-    private val onMenuItemClickListener: OnMenuItemClickListener<PowerMenuItem> = object : OnMenuItemClickListener<PowerMenuItem> {
-        override fun onItemClick(position: Int, item: PowerMenuItem) {
-            Toast.makeText(baseContext, item.title, Toast.LENGTH_SHORT).show()
-            powerMenu.selectedPosition = position // change selected item
-            powerMenu.dismiss()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,8 +62,15 @@ class CanvasActivity : Activity(), SensorEventListener {
         paint.strokeWidth = 10f
         btnChooseImage = findViewById(R.id.btnLoad)
         btnChooseColor = findViewById(R.id.btnColor)
-        btnNextFilter = findViewById(R.id.btnNextFilter)
-        println("================= > On passe dans mon code")
+        btnEmojiHappy = findViewById(R.id.btnHappy);
+        btnEmojiHappy.setOnClickListener { v -> onBtnEmojiClick() }
+        btnEmojiLove = findViewById(R.id.btnLove);
+        btnEmojiLove.setOnClickListener { v -> onBtnEmojiLoveClick() }
+        btnEmojiNerd = findViewById(R.id.btnNerd);
+        btnEmojiNerd.setOnClickListener { v -> onBtnEmojiNerdClick() }
+        btnEmojiDead = findViewById(R.id.btnDead);
+        btnEmojiDead.setOnClickListener { v -> onBtnEmojiDeadClick() }
+
         imageView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent?): Boolean {
                 if (firstTouch) {
@@ -90,17 +82,7 @@ class CanvasActivity : Activity(), SensorEventListener {
                       if (false) { // TODO
                           drawLine(v, event)
                       } else {
-                         // println(s)
-                         // println("x= "+ event.x + " y = " + event.y)
-                          if (s.left < event.getX() && event.getX() < s.left + s.right
-                              && s.top < event.getY() && event.getY() < s.top + s.bottom) {
-                              println("repositionnement")
-                              s.left = event.getX() - 128;
-                              s.top  = event.getY() - 128;
-                              s.bottom = s.top + 256f;
-                              s.right = s.left + 256f;
-                              drawSticker(s)
-                          }
+                         drawStickers(event);
                       }
                     }
                     MotionEvent.ACTION_UP -> if (false) endLine(v, event)
@@ -110,32 +92,58 @@ class CanvasActivity : Activity(), SensorEventListener {
         })
         btnChooseImage.setOnClickListener(View.OnClickListener { chooseImage() })
         btnChooseColor.setOnClickListener(View.OnClickListener { chooseColor() })
-        btnNextFilter.setOnClickListener(View.OnClickListener { nextFilter() })
-        s = Sticker(R.drawable.emoji_happy, 0f, 0f, 256f, 256f)
-        powerMenu = PowerMenu.Builder(this)
-            .addItemList(listOf(PowerMenuItem("Novel"), PowerMenuItem("Poetry"), PowerMenuItem("Art"))) // list has "Novel", "Poerty", "Art"
-            .addItem(PowerMenuItem("Journals", false)) // add an item.
-            .addItem(PowerMenuItem("Travel", false)) // aad an item list.
-            .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
-            .setMenuRadius(10f) // sets the corner radius.
-            .setMenuShadow(10f) // sets the shadow.
-            .setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
-            .setTextGravity(Gravity.CENTER)
-            .setTextTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD))
-            .setSelectedTextColor(Color.WHITE)
-            .setMenuColor(Color.WHITE)
-            .setSelectedMenuColor(ContextCompat.getColor(this, R.color.colorPrimary))
-            .setOnMenuItemClickListener(onMenuItemClickListener)
-            .build()
-        try {
-            imagePath = intent.getStringExtra("imagePath");
-            loadPicture(Uri.fromFile(File(imagePath)))
-        } catch (e: Exception) {
-            // hack
-        }
-        var mSensorMgr = this.getSystemService(Context.SENSOR_SERVICE) as SensorManager;
-        mSensorMgr.registerListener(this, mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
+        imagePath = intent.getStringExtra("imagePath");
+        loadPicture(Uri.fromFile(File(imagePath)))
+      var mSensorMgr = this.getSystemService(Context.SENSOR_SERVICE) as SensorManager;
+      mSensorMgr.registerListener(this, mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
     }
+
+    fun drawStickers(event: MotionEvent?) {
+        if (originalFilterImage != null) {
+            bitmap = originalFilterImage!!.copy(Bitmap.Config.ARGB_8888, true);
+            imageView.setImageBitmap(bitmap!!);
+            canvas = Canvas(bitmap!!);
+            firstTouch = false;
+
+        }
+        stickers.forEach{ sticker ->
+            if (event != null) {
+                if (sticker.left < event.getX() && event.getX() < sticker.left + sticker.right
+                    && sticker.top < event.getY() && event.getY() < sticker.top + sticker.bottom) {
+                    sticker.left = event.getX() - 128;
+                    sticker.top  = event.getY() - 128;
+                    sticker.bottom = sticker.top + 256f;
+                    sticker.right = sticker.left + 256f;
+                }
+            }
+            drawSticker(sticker)
+        }
+    }
+
+    fun onBtnEmojiNerdClick() {
+        var addedSticker = Sticker(R.drawable.emoji_nerd, 0f, 0f, 256f, 256f)
+        stickers.add(addedSticker);
+        drawStickers(null);
+    }
+
+    fun onBtnEmojiLoveClick() {
+        var addedSticker = Sticker(R.drawable.emoji_love, 0f, 0f, 256f, 256f)
+        stickers.add(addedSticker);
+        drawStickers(null);
+    }
+
+    fun onBtnEmojiDeadClick() {
+        var addedSticker = Sticker(R.drawable.emoji_dead, 0f, 0f, 256f, 256f)
+        stickers.add(addedSticker);
+        drawStickers(null);
+    }
+
+    fun onBtnEmojiClick() {
+        var addedSticker = Sticker(R.drawable.emoji_happy, 0f, 0f, 256f, 256f)
+        stickers.add(addedSticker);
+        drawStickers(null);
+    }
+
 
     private fun chooseColor() {
         ColorPickerDialogBuilder
@@ -172,10 +180,10 @@ class CanvasActivity : Activity(), SensorEventListener {
         bitmap = originalImage!!.copy(Bitmap.Config.ARGB_8888, true);
         if (bitmap != null) {
             redrawImageView()
-            drawSticker(s)
         } else {
             System.out.println("IMG IS NULL")
         }
+
     }
 
     private fun redrawImageView() {
@@ -212,16 +220,17 @@ class CanvasActivity : Activity(), SensorEventListener {
     }
 
     private fun drawSticker(st: Sticker) {
-        bitmap = originalFilterImage!!.copy(Bitmap.Config.ARGB_8888, true);
-        imageView.setImageBitmap(bitmap!!);
-        canvas = Canvas(bitmap!!);
+        // redraw scene
+
         // draw current sticker
         var paint0 = Paint();
         paint.isAntiAlias = false;
         paint.isFilterBitmap = true;
         paint.isDither = true;
-        var sticker = BitmapFactory.decodeResource(resources, st.drawableId);
-        canvas.drawBitmap(sticker, null, RectF(st.left, st.top, st.right, st.bottom), paint0)
+        for (sticker in stickers) {
+            var sticker = BitmapFactory.decodeResource(resources, st.drawableId);
+            canvas.drawBitmap(sticker, null, RectF(st.left, st.top, st.right, st.bottom), paint0)
+        }
         imageView.invalidate()
     }
 
@@ -255,7 +264,7 @@ class CanvasActivity : Activity(), SensorEventListener {
             }
         }
         originalFilterImage = bmOut.copy(Bitmap.Config.ARGB_8888, true)
-        drawSticker(s)
+        drawStickers(null)
     }
 
     private fun applyBlackAndWhiteFilter() {
@@ -272,13 +281,15 @@ class CanvasActivity : Activity(), SensorEventListener {
             }
         }
         originalFilterImage = bwBitmap.copy(Bitmap.Config.ARGB_8888, true)
-        drawSticker(s)
+      drawStickers(null)
+
     }
 
     private fun applyNormalFilter() {
         // todo
         originalFilterImage = originalImage!!.copy(Bitmap.Config.ARGB_8888, true);
-        drawSticker(s)
+      drawStickers(null)
+
     }
 
     private fun nextFilter() {
